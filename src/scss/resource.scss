@@ -1,0 +1,75 @@
+.resourceGen {
+  border: 3px solid #eee;
+  overflow: auto;
+  &:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+  
+  .resourceFlex {
+    padding: 1rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .progressBar[value] {
+      appearance: none;
+      width: 70%;
+      height: 1.65rem;
+
+      &::-webkit-progress-bar {
+        background-color: #333;
+        border: 2px solid #888;
+      }
+
+      &::-webkit-progress-value {
+        transition: all linear .5s;
+        background-color: #aaa;
+      }
+    }
+
+    .craftBtn {
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      float: right;
+      color: #ddd;
+      background-color: #222;
+      border: none;
+      transition: all .2s;
+
+      &:hover {
+        background-color: #444;
+      }
+    }
+
+    .amountDisplay {
+      font-size: 1.5rem;
+      color: #ddd;
+      line-height: 8rem;
+    }
+
+    .resName {
+      font-size: 2rem;
+      color: #ddd;
+    }
+
+    .resourceIcon {
+      width: 4rem;
+    }
+  }
+
+  text-align: center;
+  .dropDownArrow {
+    width: 4rem;
+    margin: -2rem auto 1rem auto;
+    height: 2rem;
+    cursor: pointer;
+    transition: all .3s;
+  }
+  .additionalInfo {
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    transition: all .5s ease-in-out;
+  }
+
+}
