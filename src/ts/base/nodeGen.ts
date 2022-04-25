@@ -30,7 +30,7 @@ generators.resContainer = ([name, icon]: string[]) => {
           },
           {
             className: "amountDisplay",
-            textContent: "Amount: 0"
+            textContent: "Available: 0"
           },
           {
             tag: "button",

@@ -79,17 +79,14 @@ export class RawResource implements Resource {
     this.structure.minerManager.removeMiner.addEventListener("click", () => this.minerManager("remove"))
   }
   cycleManual() {
-    processCycle(this.processTime([""]), this.structure.bar, () => this.generate(), this.structure.button)
+    this.processCycle(this.processTime([""]), this.structure.bar, () => this.generate(), this.structure.button)
   }
   private async cycleAutomated() {
-    if(this.isAutomated) {
-      await processCycle(this.processTime(["automation"]), this.structure.bar, () => this.generate())
-      this.cycleAutomated()
-    } 
+    await this.processCycle(this.processTime(["automation"]), this.structure.bar, () => this.generate())
   }
   private generate() {
-    this.count += this.mineYield;
     this.structure.bar.value = 0;
+    this.count += this.mineYield;
     this.structure.amountDisplay.textContent = `Available: ${this.count}`
   }
   private dropDownToggle() {
@@ -104,15 +101,17 @@ export class RawResource implements Resource {
         this.structure.button.disabled = true
       }
       this.miner.count += 1
-      this.refresh(["display", "automation"])
+      this.isAutomated = false
+      setTimeout(() => {this.refresh(["display", "automation"])}, 100)
     } else if(inp === "remove") {
       if(this.miner) {
-        if(this.miner.count === 1) {
-          this.miner.count -= 1
-          this.refresh(["display"])
+        this.miner.count -= 1
+        this.refresh(["display"])
+        if(this.miner.count === 0) {
           this.miner = undefined
-          this.refresh(["automation"])
         }
+        this.isAutomated = false
+        setTimeout(() => this.refresh(["automation"]), 100) 
       }
     }
   }
@@ -120,13 +119,14 @@ export class RawResource implements Resource {
   private refresh(kind: ("display" | "automation" | "all")[]) {
     kind.forEach(k => {
       if (k === "display") {
-        this.structure.amountDisplay.textContent = `Amount: ${this.count}`
+        this.structure.amountDisplay.textContent = `Available: ${this.count}`
         this.structure.automationDisplay.textContent = `${this.miner.count} Miners are working right now`
         this.structure.productionDisplay.textContent = `Current production level is boom`
       } else if(k === "automation") {
-        if(this.miner) this.isAutomated = true
-        else this.isAutomated = false
-        this.cycleAutomated()
+        if(this.miner) {
+          this.isAutomated = true
+          this.cycleAutomated()
+        }
       }
     })
   }
@@ -134,25 +134,31 @@ export class RawResource implements Resource {
     let time = this.processBase / this.hardness
     modifier.forEach(mod => {
       if(mod === "automation") {
-        time = time - (this.miner.count * this.miner.power * (time / 50))
+        time = time - (this.miner.count * this.miner.power * (time /25  ))
       }
     })
     return time
   }
-}
-
-let processCycle = async (processTime: number, bar: HTMLProgressElement, callback: () => void, button?: HTMLButtonElement ) => {
-  if(button) {button.disabled = true}
-  let percent = 0
-  if (bar.classList.contains("notransition")) bar.classList.remove(("notransition"))
-  for (let i = 0; i < 100; i++) {
-    percent += 1
-    bar.value = percent
-    await sleep(processTime * 10)
+  private async processCycle(processTime: number, bar: HTMLProgressElement, callback: () => void, button?: HTMLButtonElement ) {
+    console.log(processTime)
+    if(button) {button.disabled = true}
+    let percent = 0
+    if (bar.classList.contains("notransition")) bar.classList.remove(("notransition"))
+    for (let i = 0; i < 100; i++) {
+      if(this.isAutomated) {
+        percent += 1
+        bar.value = percent
+        await sleep(processTime * 10)
+      } else {
+        bar.value = 0
+        return 0
+      };
+    }
+    await sleep(500)
+    bar.classList.add("notransition")
+    callback();
+    await sleep(500);
+    if(button) {button.disabled = false}
+    if(this.isAutomated) this.processCycle(processTime, bar, callback)
   }
-  await sleep(500)
-  bar.classList.add("notransition")
-  callback();
-  await sleep(500);
-  if(button) {button.disabled = false}
 }
