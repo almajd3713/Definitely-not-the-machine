@@ -1,3 +1,5 @@
+@import "./mixins";
+
 .resourceGen {
   border: 3px solid #eee;
   overflow: auto;
@@ -28,12 +30,9 @@
     }
 
     .craftBtn {
-      padding: 1rem 2rem;
+      @include button($color: #ddd, $bgcolor: #222);
       font-size: 1.5rem;
       float: right;
-      color: #ddd;
-      background-color: #222;
-      border: none;
       transition: all .2s;
 
       &:hover {
@@ -70,6 +69,27 @@
     height: 0;
     overflow: hidden;
     transition: all .5s ease-in-out;
+
+    .infoPart {
+      width: 50%;
+      height: 90%;
+      &:first-child {
+        border-right: 1px solid #999;
+      }
+      .autoBtn {
+        @include button();
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        transition: all .3s;
+        &:not(:last-of-type) {
+          margin-right: 2rem;
+        }
+      }
+      .automatonDisplay {
+        font-size: 1.5rem;
+        padding: 1rem 2rem;
+      }
+    }
   }
 
 }

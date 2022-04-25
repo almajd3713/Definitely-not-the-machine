@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev:build": "webpack -w",
-    "dev:start": "nodemon server.js"
+    "dev:start": "nodemon server.js",
+    "start:dev": "concurrently \"npm run dev:*"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "@types/webpack-env": "^1.16.4",
+    "concurrently": "^7.1.0",
     "css-loader": "^6.7.1",
     "nodemon": "^2.0.15",
     "raw-loader": "^4.0.2",

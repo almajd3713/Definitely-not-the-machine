@@ -47,7 +47,29 @@ generators.resContainer = ([name, icon]: string[]) => {
         className: "additionalInfo",
         subNodes: [
           {
-            
+            className: "infoPart",
+            subNodes: [
+              {
+                tag: "button",
+                className: "autoBtn",
+                textContent: "Add Miner"
+              },
+              {
+                tag: "button",
+                className: "autoBtn",
+                textContent: "Remove Miner"
+              },
+              {
+                className: "automatonDisplay",
+                textContent: "0 Miners are working right now"
+              },
+              {
+                className: "automatonDisplay",
+                textContent: "Production is 0 items/s"
+              }
+            ]
+          }, {
+            className: "infoPart"
           }
         ]
       }
