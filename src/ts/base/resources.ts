@@ -38,7 +38,6 @@ export class RawResource implements Resource {
   name: string = "placeholder"
   codeName: string = "pl4c3h0lder"
   processBase: number
-  isAutomated: boolean = false
   miner: Miner | undefined
   container: HTMLDivElement
   additionalInfoDisplay: boolean = false
@@ -73,16 +72,10 @@ export class RawResource implements Resource {
 
 
 
-    this.structure.button.addEventListener("click", () => this.cycleManual())
+    this.structure.button.addEventListener("click", () => this.processCycle("manual", 0))
     this.structure.dropDownArrow.addEventListener("click", () => this.dropDownToggle())
     this.structure.minerManager.addMiner.addEventListener("click", () => this.minerManager("add"))
     this.structure.minerManager.removeMiner.addEventListener("click", () => this.minerManager("remove"))
-  }
-  cycleManual() {
-    this.processCycle(this.processTime([""]), this.structure.bar, () => this.generate(), this.structure.button, "manual")
-  }
-  private async cycleAutomated() {
-    await this.processCycle(this.processTime(["automation"]), this.structure.bar, () => this.generate(), false, "automated")
   }
   private generate() {
     this.structure.bar.value = 0;
@@ -94,26 +87,24 @@ export class RawResource implements Resource {
     this.structure.dropDownArrow.style.transform = `scaleY(${this.additionalInfoDisplay ? "-1" : "1"})`
     this.structure.additionalInfoContainer.style.height = `${this.additionalInfoDisplay ? "20rem" : "0"}`
   }
+  private _isAutomated: number = 0
+  get isAutomated(): number {
+    return this._isAutomated
+  }
+  set isAutomated(val) {
+    this._isAutomated = val
+    if(this.miner) this.processCycle("auto", this.isAutomated)
+    this.refresh(["display"])
+  }
   private minerManager(inp: string) {
     if(inp === "add") {
-      if(!this.miner) {
-        this.miner = new Miner(["Automaton", "automaton"], "./svg/wood.svg", 0.5)
-        this.structure.button.disabled = true
-      }
+      if(!this.miner) this.miner = new Miner(["Miner", "automaton"], "./svg/wood.svg", 0.5)
       this.miner.count += 1
-      this.isAutomated = false
-      setTimeout(() => {this.refresh(["display", "automation"])}, 100)
-    } else if(inp === "remove") {
-      if(this.miner) {
-        this.miner.count -= 1
-        this.refresh(["display"])
-        if(this.miner.count === 0) {
-          this.miner = undefined
-          this.structure.button.disabled = false
-        }
-        this.isAutomated = false
-        setTimeout(() => this.refresh(["automation"]), 100) 
-      }
+      this.isAutomated += 1
+    }
+    else if(inp === "remove") {
+      if(this.isAutomated !== 0) {this.isAutomated -= 1; this.miner.count -= 1}
+      if(this.miner && this.isAutomated === 0) this.miner = undefined
     }
   }
 
@@ -121,12 +112,12 @@ export class RawResource implements Resource {
     kind.forEach(k => {
       if (k === "display") {
         this.structure.amountDisplay.textContent = `Available: ${this.count}`
-        this.structure.automationDisplay.textContent = `${this.miner.count} Miners are working right now`
+        this.structure.automationDisplay.textContent = `${this.isAutomated} Miners are working right now`
         this.structure.productionDisplay.textContent = `Current production level is boom`
       } else if(k === "automation") {
         if(this.miner) {
-          this.isAutomated = true
-          this.cycleAutomated()
+          // this.isAutomated = true
+          // this.cycleAutomated()
         }
       }
     })
@@ -140,62 +131,40 @@ export class RawResource implements Resource {
     })
     return time
   }
-  automatedProcessCount: number = 0
-  private async processCycle(processTime: number, bar: HTMLProgressElement, callback: () => void, button?: HTMLButtonElement | false , mode?: "manual" | "automated") {
-    let barContinousDisplay = (bool: boolean) => {
-      if(bool && !bar.classList.contains("continousBar")) bar.classList.add("continousBar")
-      else if(!bool && bar.classList.contains("continousBar")) bar.classList.remove("continousBar")
-    }
-    let afterProcess = async(fast: boolean) => {
-      if(fast) {
-        callback();
-        this.processCycle(this.processTime(["automation"]), bar, callback, button, mode)
-      } else if(!fast) {
-        // if (processTime >= 1) await sleep(500)
-        callback();
-        await sleep(500);
-        if (button) { button.disabled = false }
-        if (mode === "automated" && this.isAutomated) this.processCycle(this.processTime(["automation"]), bar, callback, button, mode)
+  
+  private async processCycle(mode: "manual" | "auto", machineCount: number) {
+    let btn = this.structure.button, bar = this.structure.bar
+    btn.disabled = true
+    if(mode === "manual") {
+      for(let i = 0; i < 100; i++) {
+        if(this._isAutomated) {bar.value = 0; return 0}
+        bar.value += 1
+        await sleep(this.processTime([""]) * 10)
       }
+      await sleep(500)
+      this.generate()
+      bar.value = 0; btn.disabled = false
     }
-    // console.log(processTime)
-    if(button) {button.disabled = true}
-    let percent = 0
-
-    if(processTime <= 1 && this.isAutomated) {
-      this.automatedProcessCount += 1
-      if(this.automatedProcessCount === 1) {
-        barContinousDisplay(true)
-        await sleep(processTime * 1000)
-        afterProcess(true)
+    else if(mode === "auto") {
+      console.log(this.processTime(["automation"]))
+      if(this.processTime(["automation"]) > 1) {
+        for (let i = 0; i < 100; i++) {
+          if (!this._isAutomated || this.isAutomated !== machineCount) { bar.value = 0; btn.disabled = false; return 0 }
+          bar.value += 1
+          await sleep(this.processTime(["automation"]) * 10)
+        }
+        this.generate()
+        if (this.isAutomated) this.processCycle("auto", machineCount)
       } else {
-        this.automatedProcessCount -= 1
-        this.processCycle(this.processTime(["automation"]), bar, callback, button, mode)
-        return 0;
-      }
-    } else {
-      for (let i = 0; i < 100; i++) {
-        if (mode === "manual") {
-          if (this.isAutomated) {
-            bar.value = 0
-            return 0
-          }
-          percent += 1
-          bar.value = percent
-          await sleep(processTime * 10)
+        if (!this._isAutomated || this.isAutomated !== machineCount) { 
+          bar.value = 0; btn.disabled = false; return 0 
         }
-        else if (mode === "automated") {
-          if (this.isAutomated) {
-            percent += 1
-            bar.value = percent
-            await sleep(processTime * 10)
-          } else {
-            bar.value = 0
-            return 0
-          };
-        }
+        console.log("aye")
+        bar.value = 100
+        await sleep(this.processTime(["automation"]) * 1000)
+        this.generate()
+        if(this.isAutomated) this.processCycle("auto", machineCount)
       }
-      afterProcess(false)
     }
   }
 }

@@ -13,14 +13,10 @@
     align-items: center;
     justify-content: space-between;
     
-    .continousBar {
-      animation: continousBar 3s ease-in-out infinite alternate ;
-    }
     .progressBar[value] {
       appearance: none;
       width: 70%;
       height: 1.65rem;
-
 
       &::-webkit-progress-bar {
         background-color: #333;
@@ -29,7 +25,7 @@
 
       &::-webkit-progress-value {
         transition: all linear .5s;
-        background-color: #aaa;
+        animation: continousBar 1.5s ease-in-out infinite alternate ;
       }
     }
 
@@ -100,9 +96,9 @@
 
 @keyframes continousBar {
   0% {
-    background-color: #777;
+    background-color: black;
   }
   100% {
-    background-color: #aaa;
+    background-color: white;
   }
 }
