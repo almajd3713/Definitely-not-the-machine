@@ -9,7 +9,7 @@ let craft1 =  new RawResource({
 })
 let craft2 = new RawResource({
   name: ["Stone", "stone"],
-  icon: Svgs.find(_ => _.includes("wood")),
+  icon: Svgs.find(_ => _.includes("stone")),
   processBase: 15
 })
 let gameContainer: HTMLDivElement = document.querySelector(".container")

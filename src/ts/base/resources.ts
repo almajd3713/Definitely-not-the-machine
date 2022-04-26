@@ -79,10 +79,10 @@ export class RawResource implements Resource {
     this.structure.minerManager.removeMiner.addEventListener("click", () => this.minerManager("remove"))
   }
   cycleManual() {
-    this.processCycle(this.processTime([""]), this.structure.bar, () => this.generate(), this.structure.button)
+    this.processCycle(this.processTime([""]), this.structure.bar, () => this.generate(), this.structure.button, "manual")
   }
   private async cycleAutomated() {
-    await this.processCycle(this.processTime(["automation"]), this.structure.bar, () => this.generate())
+    await this.processCycle(this.processTime(["automation"]), this.structure.bar, () => this.generate(), false, "automated")
   }
   private generate() {
     this.structure.bar.value = 0;
@@ -109,6 +109,7 @@ export class RawResource implements Resource {
         this.refresh(["display"])
         if(this.miner.count === 0) {
           this.miner = undefined
+          this.structure.button.disabled = false
         }
         this.isAutomated = false
         setTimeout(() => this.refresh(["automation"]), 100) 
@@ -139,26 +140,62 @@ export class RawResource implements Resource {
     })
     return time
   }
-  private async processCycle(processTime: number, bar: HTMLProgressElement, callback: () => void, button?: HTMLButtonElement ) {
-    console.log(processTime)
+  automatedProcessCount: number = 0
+  private async processCycle(processTime: number, bar: HTMLProgressElement, callback: () => void, button?: HTMLButtonElement | false , mode?: "manual" | "automated") {
+    let barContinousDisplay = (bool: boolean) => {
+      if(bool && !bar.classList.contains("continousBar")) bar.classList.add("continousBar")
+      else if(!bool && bar.classList.contains("continousBar")) bar.classList.remove("continousBar")
+    }
+    let afterProcess = async(fast: boolean) => {
+      if(fast) {
+        callback();
+        this.processCycle(this.processTime(["automation"]), bar, callback, button, mode)
+      } else if(!fast) {
+        // if (processTime >= 1) await sleep(500)
+        callback();
+        await sleep(500);
+        if (button) { button.disabled = false }
+        if (mode === "automated" && this.isAutomated) this.processCycle(this.processTime(["automation"]), bar, callback, button, mode)
+      }
+    }
+    // console.log(processTime)
     if(button) {button.disabled = true}
     let percent = 0
-    if (bar.classList.contains("notransition")) bar.classList.remove(("notransition"))
-    for (let i = 0; i < 100; i++) {
-      if(this.isAutomated) {
-        percent += 1
-        bar.value = percent
-        await sleep(processTime * 10)
+
+    if(processTime <= 1 && this.isAutomated) {
+      this.automatedProcessCount += 1
+      if(this.automatedProcessCount === 1) {
+        barContinousDisplay(true)
+        await sleep(processTime * 1000)
+        afterProcess(true)
       } else {
-        bar.value = 0
-        return 0
-      };
+        this.automatedProcessCount -= 1
+        this.processCycle(this.processTime(["automation"]), bar, callback, button, mode)
+        return 0;
+      }
+    } else {
+      for (let i = 0; i < 100; i++) {
+        if (mode === "manual") {
+          if (this.isAutomated) {
+            bar.value = 0
+            return 0
+          }
+          percent += 1
+          bar.value = percent
+          await sleep(processTime * 10)
+        }
+        else if (mode === "automated") {
+          if (this.isAutomated) {
+            percent += 1
+            bar.value = percent
+            await sleep(processTime * 10)
+          } else {
+            bar.value = 0
+            return 0
+          };
+        }
+      }
+      afterProcess(false)
     }
-    await sleep(500)
-    bar.classList.add("notransition")
-    callback();
-    await sleep(500);
-    if(button) {button.disabled = false}
-    if(this.isAutomated) this.processCycle(processTime, bar, callback)
   }
 }
