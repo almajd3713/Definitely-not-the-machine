@@ -77,6 +77,9 @@ export class RawResource implements Resource {
     this.structure.minerManager.addMiner.addEventListener("click", () => this.minerManager("add"))
     this.structure.minerManager.removeMiner.addEventListener("click", () => this.minerManager("remove"))
   }
+  init(container: HTMLElement | Element) {
+    container.appendChild(this.container)
+  } 
   private generate() {
     this.structure.bar.value = 0;
     this.count += this.mineYield;

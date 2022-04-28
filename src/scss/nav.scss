@@ -1,0 +1,62 @@
+
+::-webkit-scrollbar {
+  width: 1.5rem
+}
+
+::-webkit-scrollbar-track {
+  background-color: #222
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: darken(darkgreen, 15);
+}
+
+.menuWrapper {
+  height: 5rem;
+  width: 40vw;
+  position: fixed;
+  bottom: -4rem;
+  transition: all .3s;
+  right: 0;
+  background-color: green;
+  clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+
+  &:hover {
+    bottom: 0
+  }
+
+  .menu {
+    background-color: #111;
+    height: calc(5rem - 2px);
+    width: calc(40vw - 2px);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-column-start: end;
+    align-content: center;
+
+    .menuItem {
+      height: 100%;
+      padding: .5rem 0;
+      font-size: 1.5rem;
+      color: white;
+      text-align: center;
+      line-height: 4.5rem;
+      transition: all .3s;
+      cursor: pointer;
+
+      &:first-child {
+        grid-column-start: 2;
+      }
+
+      &:hover {
+        transform: translateY(-3px);
+        background-color: #444;
+      }
+    }
+  }
+}

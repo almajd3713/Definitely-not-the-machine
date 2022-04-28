@@ -6,22 +6,36 @@ html {
   font-family: "Roboto", sans-serif;
 }
 body {
-  margin-bottom: 3rem;
+  padding-bottom: 2rem;
 }
 .container {
   width: 90%;
+  height: 100%;
   margin: auto;
   margin-top: 2rem;
+  position: relative;
+  overflow-x: hidden;
 }
 
-::-webkit-scrollbar {
-  width: 1.5rem
+@mixin page {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  transition: all .4s
 }
 
-::-webkit-scrollbar-track {
-  background-color: #222
+#pageMining {
+  @include page;
 }
-
-::-webkit-scrollbar-thumb {
-  background-color: darken(darkgreen, 15);
+#pageCrafting {
+  @include page;
+  position: absolute;
+  top: 0;
+  left: 100vw;
+  background-color: green
+}
+#pageMap {
+  @include page;
+  left: 200vw;
+  background-color: red;
 }

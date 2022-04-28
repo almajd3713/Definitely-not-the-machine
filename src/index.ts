@@ -1,19 +1,4 @@
 import "./scss/index.scss"
-import { RawResource } from "./ts/base/resources"
-import Svgs from "./loader"
+import init from "./ts/initScript"
 
-let craft1 =  new RawResource({
-  name: ["Wood", "wood"],
-  icon: Svgs.find(_ => _.includes("wood")),
-  processBase: 8
-})
-let craft2 = new RawResource({
-  name: ["Stone", "stone"],
-  icon: Svgs.find(_ => _.includes("stone")),
-  processBase: 15
-})
-let gameContainer: HTMLDivElement = document.querySelector(".container")
-
-gameContainer.appendChild(craft1.container)
-gameContainer.appendChild(craft2.container)
-
+init()

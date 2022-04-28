@@ -77,4 +77,25 @@ generators.resContainer = ([name, icon]: string[]) => {
   })
 }
 
+generators.menuGen = () => {
+  return createNode({
+    className: "menuWrapper",
+    subNodes: [{
+      className: "menu",
+      subNodes: [
+        {
+          className: "menuItem",
+          textContent: "Resources"
+        }, {
+          className: "menuItem",
+          textContent: "Crafting"
+        }, {
+          className: "menuItem",
+          textContent: "Map"
+        }
+      ]
+    }]
+  })
+}
+
 export default generators
