@@ -98,4 +98,73 @@ generators.menuGen = () => {
   })
 }
 
+generators.craftingGen = () => {
+  return createNode({
+    subNodes: [
+      {
+        className: "resourceBar"
+      }, {
+        className: "craftingContainer", subNodes: [
+          {
+            className: "tabsContainer",
+            subNodes: [
+              {
+                tag: "button",
+                className: "craftingTabButton",
+                textContent: "Inventory",
+                subNodes: [{className: "hoverBg"}]
+              }, {
+                tag: "button",
+                className: "craftingTabButton",
+                textContent: "Crafting",
+                subNodes: [{className: "hoverBg"}]
+              }, {tag: "hr"},
+              {className: "craftingWrapper", subNodes: [
+                {
+                  id: "selectContainer",
+                }, {
+                  id: "infoContainer"
+                }
+              ]}
+            ]
+          }
+        ]
+      }
+    ]
+  })
+}
+generators.itemGen1 = () => {
+  return createNode({
+    subNodes: [
+      {
+        tag: "img",
+        className: "itemIcon"
+      }, {
+        className: "itemName",
+      }
+    ]
+  })
+}
+generators.itemGen2 = () => {
+  return createNode({
+    className: "infoWrapper",
+    subNodes: [
+      {
+        tag: "img",
+        className: "infoIcon"
+      }, 
+      {
+        className: "infoTextWrapper",
+        subNodes: [
+          {
+            className: "infoName"
+          }, {
+            className: "infoDesc"
+          }
+        ]
+      }
+    ]
+  })
+}
+
 export default generators

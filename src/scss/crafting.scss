@@ -1,0 +1,122 @@
+
+.resourceBar {
+  height: 3rem;
+  background-color: green;
+  margin-bottom: 4rem;
+}
+
+$terminalGreen: #0b7709;
+
+.craftingTabButton {
+  @include button($terminalGreen, black);
+  position: relative;
+  font-size: 2rem;
+  border: 1px solid $terminalGreen;
+  border-bottom: none;
+  transition: all .2s;
+  overflow: hidden;
+  &:first-child {
+    margin-left: 3rem;
+  }
+  &:hover {
+    color: black;
+    background-color: transparent;
+  }
+  .hoverBg {
+    width: 120%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 120%;
+    transition: all .3s;
+    transform: skew(-20deg);
+    background-color: $terminalGreen;
+    z-index: -1;
+  }
+  &:hover div {
+    left: -10%;
+
+  }
+  &.selected {
+    transform: scale(1.1);
+    z-index: 1  ;
+  }
+}
+
+.craftingContainer {
+  .craftingWrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 0 2rem;
+
+    [id$=ainer] {
+      min-height: 40rem;
+      width: 100%;
+      border: solid 1px $terminalGreen;
+    }
+    
+    #selectContainer {
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-gap: 1.5rem;
+      align-content: flex-start;
+      padding: 2rem;
+    
+      & > div {
+        box-sizing: content-box;
+        border: 1px solid $terminalGreen;
+        aspect-ratio: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .itemIcon {
+          width: 65%;
+          aspect-ratio: 1;
+          margin: 3px 0;
+        }
+        .itemName {
+          font-size: 1.5rem;
+          color: lighten($terminalGreen, 10)
+        }
+      }
+    }
+
+    #infoContainer {
+      box-sizing: border-box;
+      padding: 3rem;
+
+      .infoWrapper {
+        display: flex;
+        
+        .infoIcon {
+          width: 40%;
+          margin-right: 1rem;
+        }
+        .infoTextWrapper {
+          flex-grow: 1;
+          .infoName {
+            font-size: 2rem;
+            text-align: center;
+          }
+          .infoDesc {
+            font-size: 1.25rem;
+            line-height: 2rem;
+          }
+        }
+      }      
+    }
+  }
+  hr {
+    margin: 0;
+    border-width: 2px;
+    border-color: $terminalGreen;
+    border-left: none;
+    border-right: none;
+    height: 2rem;
+    margin-bottom: 3rem;
+  }
+
+}

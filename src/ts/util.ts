@@ -48,3 +48,14 @@ export function createNode(props: Props) {
 
 // sleep (for async only)
 export let sleep = (ms: number) => new Promise(t => setTimeout(t, ms))
+
+// short for querySelector
+export let $ = (node: string, index?: number) => {
+  console.log(node)
+  let el = Array.from(document.querySelectorAll(node)) as HTMLElement[]
+  if(el.length < 1) console.error("error: this node doesn't exist !")
+  let newEl: HTMLElement
+  if(el.length === 1) newEl = el[0]
+  else if(index) newEl = el[index]
+  return newEl
+}

@@ -26,4 +26,5 @@ let pageSelector = (pages: HTMLElement[], id: number) => {
       pages[1].style.left = "-100vw"
       pages[2].style.left = "0"
   }
+  window.scrollTo(0, 0)
 }
