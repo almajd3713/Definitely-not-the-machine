@@ -1,10 +1,10 @@
 
 import generators from "./base/nodeGen";
+import { resourceCollection } from "./base/variables";
 import pageManager from "./pageManager";
 import craftInit from "./scripts/craftInit";
 import resInit from "./scripts/resInit";
 import { $ } from "./util";
-import { craftCon } from "./base/variables"
 
 export default (): void => {
   document.querySelector("body").appendChild(generators.menuGen("a"))
@@ -14,5 +14,4 @@ export default (): void => {
   craftInit();
 
   ($(".menuItem", 1) as HTMLElement).click()
-
 }

@@ -7,6 +7,9 @@ interface genInterface<Gen extends generator> {
 
 let generators: genInterface<generator> = {}
 
+let styles = {
+  primaryColor: "#0b7709"
+}
 generators.resContainer = ([name, icon]: string[]) => {
   return createNode({
     className: "resourceGen",
@@ -122,6 +125,13 @@ generators.craftingGen = () => {
               {className: "craftingWrapper", subNodes: [
                 {
                   id: "selectContainer",
+                  subNodes: [
+                    {
+                      id: "inventoryCont"
+                    }, {
+                      id: "craftingCont"
+                    }
+                  ]
                 }, {
                   id: "infoContainer"
                 }
@@ -150,16 +160,39 @@ generators.itemGen2 = () => {
     className: "infoWrapper",
     subNodes: [
       {
-        tag: "img",
-        className: "infoIcon"
-      }, 
-      {
-        className: "infoTextWrapper",
+        className: "infoInfoWrapper", 
         subNodes: [
           {
-            className: "infoName"
+            tag: "img",
+            className: "infoIcon"
           }, {
-            className: "infoDesc"
+            className: "inventAmount",
+          },
+          {
+            className: "infoTextWrapper",
+            subNodes: [
+              {
+                className: "infoName"
+              }, {
+                className: "infoDesc"
+              }
+            ]
+          },
+        ]
+      },
+      {
+        className: "infoCraftWrapper",
+        subNodes: [
+          {
+            className: "craftText",
+            textContent: "Requirements:"
+          }, {
+            tag: "button",
+            className: "craftProcessBtn",
+            textContent: "Craft !"
+          }, {
+            className: "craftAlert",
+            textContent: "WMOIQMSMMWQKLMDK"
           }
         ]
       }

@@ -20,8 +20,9 @@ interface Props {
   textContent?: string
   subNodes?: Props | Props[]
   onClick?: () => void
+  style?: Partial<CSSStyleDeclaration>
 }
-export function createNode(props: Props) {
+export function createNode(props: Props): HTMLElement {
   let node = document.createElement(props.tag || "div")
   if (props.className) {
     if (Array.isArray(props.className)) props.className.forEach(classN => node.classList.add(classN))
@@ -42,6 +43,9 @@ export function createNode(props: Props) {
       else node.appendChild(createNode(subNode))
     }); else node.appendChild(createNode(props.subNodes))
   }
+  if(props.style) for(let prop in props.style) {
+    node.style[prop] = props.style[prop]
+  }
   if (props.onClick) node.onclick = props.onClick
   return node
 }
@@ -51,11 +55,9 @@ export let sleep = (ms: number) => new Promise(t => setTimeout(t, ms))
 
 // short for querySelector
 export let $ = (node: string, index?: number) => {
-  console.log(node)
   let el = Array.from(document.querySelectorAll(node)) as HTMLElement[]
-  if(el.length < 1) console.error("error: this node doesn't exist !")
+  if(el.length < 1) return null
   let newEl: HTMLElement
-  if(el.length === 1) newEl = el[0]
-  else if(index) newEl = el[index]
+  newEl = el[index || 0]
   return newEl
 }

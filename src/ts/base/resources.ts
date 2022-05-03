@@ -1,6 +1,7 @@
 import { FixedLengthArray, sleep } from "../util";
 import { Miner } from "./machines";
 import generators from "./nodeGen"
+import { resourceCollection } from "./variables";
 
 
 interface Resource {
@@ -42,6 +43,7 @@ export class RawResource implements Resource {
   container: HTMLDivElement
   additionalInfoDisplay: boolean = false
   structure: resourceStructure
+  icon: string
 
   constructor(props: RawResourceConstructor) {
     this.name = props.name[0]
@@ -49,8 +51,9 @@ export class RawResource implements Resource {
     this.mineYield = props.mineYield || 1
     this.hardness = props.hardness || 1
     this.processBase = props.processBase
+    this.icon = props.icon
 
-    this.container = generators.resContainer([this.name, props.icon]) as HTMLDivElement
+    this.container = generators.resContainer([this.name, this.icon]) as HTMLDivElement
     let resourceInfo = this.container.children[0]
     this.structure = {
       bar: resourceInfo.children[2] as HTMLProgressElement,
@@ -76,6 +79,8 @@ export class RawResource implements Resource {
     this.structure.dropDownArrow.addEventListener("click", () => this.dropDownToggle())
     this.structure.minerManager.addMiner.addEventListener("click", () => this.minerManager("add"))
     this.structure.minerManager.removeMiner.addEventListener("click", () => this.minerManager("remove"))
+
+    resourceCollection.addResource(this)
   }
   init(container: HTMLElement | Element) {
     container.appendChild(this.container)
@@ -162,7 +167,6 @@ export class RawResource implements Resource {
         if (!this._isAutomated || this.isAutomated !== machineCount) { 
           bar.value = 0; btn.disabled = false; return 0 
         }
-        console.log("aye")
         bar.value = 100
         await sleep(this.processTime(["automation"]) * 1000)
         this.generate()
