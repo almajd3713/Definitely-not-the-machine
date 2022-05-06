@@ -2,8 +2,7 @@
 import { createNode, FixedLengthArray } from "../util";
 import generators from "./nodeGen";
 import {$} from "../util"
-import {resourceCollection} from "./variables"
-
+import {craftContainer, infoContainer, itemContainer, resourceCollection} from "./variables"
 
 interface ItemInitInterface {
   name: string, codeName: string, icon: string, desc: string, craftable: ItemInterface["craftable"], countable: ItemInterface["countable"]
@@ -35,9 +34,6 @@ export class Item implements ItemInterface{
   itemManager: itemController;
   countable: [isCountable: boolean, count: number] 
   craftable: [isCraftable: boolean, ingredients?: [item: string, count: number][]];
-  itemContainer = $("#inventoryCont");
-  craftContainer = $("#craftingCont");
-  infoContainer = $("#infoContainer");
 
   constructor(props: ItemInitInterface) {
     this.assignVarsAndEvents(props)
@@ -56,17 +52,17 @@ export class Item implements ItemInterface{
   private assignVarsAndEvents(props: ItemInitInterface) {
     ({ name: this.name, codeName: this.codeName, icon: this.icon, craftable: this.craftable, countable: this.countable, desc: this.desc } = props)
     if(this.craftable[0] && !this.craftable[1]) throw new Error(`Err: ${this.codeName} is craftable, but no ingredients are present`)
-    this.container[0] = generators.itemGen1("");
+    this.container[0] = generators.itemBoxGen("");
     this.countable = props.countable
     this.container[1] = this.container[0].cloneNode(true) as HTMLElement
     this.container.forEach(cont => (cont.children[0] as HTMLImageElement).src = this.icon)
     this.container[0].children[1].textContent = this.name
     this.container[1].children[1].textContent = "Craft"
     this.itemManager = {
-      name:     this.infoContainer.querySelector(".infoName"),
-      icon:     this.infoContainer.querySelector(".infoIcon"),
-      desc:     this.infoContainer.querySelector(".infoDesc"),
-      craftBtn: this.infoContainer.querySelector(".craftProcessBtn") as HTMLButtonElement
+      name:     infoContainer.querySelector(".infoName"),
+      icon:     infoContainer.querySelector(".infoIcon"),
+      desc:     infoContainer.querySelector(".infoDesc"),
+      craftBtn: infoContainer.querySelector(".craftProcessBtn") as HTMLButtonElement
     }
     this.refresh("all")
   }
@@ -78,8 +74,8 @@ export class Item implements ItemInterface{
     this.itemManager.craftBtn.addEventListener("click", () => this.craftCycle(this.craftable[1]))
   }
   init() {
-    this.itemContainer.appendChild(this.container[0])
-    if(this.craftable[0]) this.craftContainer.appendChild(this.container[1])
+    itemContainer.appendChild(this.container[0])
+    if(this.craftable[0]) craftContainer.appendChild(this.container[1])
   }
   private displayInfo(manager: itemController, type: 0 | 1) {
     if(type === 0) {
@@ -99,7 +95,7 @@ export class Item implements ItemInterface{
       })
       $(".infoInfoWrapper").style.display = "none"
     }
-  (this.infoContainer.children[0] as HTMLElement).style.display = "none"
+  (infoContainer.children[0] as HTMLElement).style.display = "none"
   }
   private changeTab(inp: "invent" | "craft") {
     $(".infoInfoWrapper").style.display = "none"
@@ -114,7 +110,7 @@ export class Item implements ItemInterface{
         $("#inventoryCont").style.display = "none"
         break;
     }
-    (this.infoContainer.children[0] as HTMLElement).style.display = "block"
+    (infoContainer.children[0] as HTMLElement).style.display = "block"
   }
 
   private craftCycle(ingredients: ItemInterface["craftable"][1]) {
@@ -158,7 +154,6 @@ export class Item implements ItemInterface{
       case "inventory": case "all":
         $(".inventAmount").textContent = `Current Amount: ${this.count}`
       case "crafting": case "all":
-      
     }
   }
 

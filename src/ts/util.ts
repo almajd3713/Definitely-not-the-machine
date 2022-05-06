@@ -56,7 +56,10 @@ export let sleep = (ms: number) => new Promise(t => setTimeout(t, ms))
 // short for querySelector
 export let $ = (node: string, index?: number) => {
   let el = Array.from(document.querySelectorAll(node)) as HTMLElement[]
-  if(el.length < 1) return null
+  if(el.length < 1) {
+    console.error("no such node exists")
+    return null
+  }
   let newEl: HTMLElement
   newEl = el[index || 0]
   return newEl

@@ -133,7 +133,49 @@ generators.craftingGen = () => {
                     }
                   ]
                 }, {
-                  id: "infoContainer"
+                  id: "infoContainer",
+                  subNodes: [{
+                    className: "infoWrapper",
+                    subNodes: [
+                      {
+                        className: "infoInfoWrapper",
+                        subNodes: [
+                          {
+                            tag: "img",
+                            className: "infoIcon"
+                          }, {
+                            className: "inventAmount",
+                          },
+                          {
+                            className: "infoTextWrapper",
+                            subNodes: [
+                              {
+                                className: "infoName"
+                              }, {
+                                className: "infoDesc"
+                              }
+                            ]
+                          },
+                        ]
+                      },
+                      {
+                        className: "infoCraftWrapper",
+                        subNodes: [
+                          {
+                            className: "craftText",
+                            textContent: "Requirements:"
+                          }, {
+                            tag: "button",
+                            className: "craftProcessBtn",
+                            textContent: "Craft !"
+                          }, {
+                            className: "craftAlert",
+                            textContent: "galunga"
+                          }
+                        ]
+                      }
+                    ]
+                  }]
                 }
               ]}
             ]
@@ -143,7 +185,7 @@ generators.craftingGen = () => {
     ]
   })
 }
-generators.itemGen1 = () => {
+generators.itemBoxGen = () => {
   return createNode({
     subNodes: [
       {
@@ -151,50 +193,6 @@ generators.itemGen1 = () => {
         className: "itemIcon"
       }, {
         className: "itemName",
-      }
-    ]
-  })
-}
-generators.itemGen2 = () => {
-  return createNode({
-    className: "infoWrapper",
-    subNodes: [
-      {
-        className: "infoInfoWrapper", 
-        subNodes: [
-          {
-            tag: "img",
-            className: "infoIcon"
-          }, {
-            className: "inventAmount",
-          },
-          {
-            className: "infoTextWrapper",
-            subNodes: [
-              {
-                className: "infoName"
-              }, {
-                className: "infoDesc"
-              }
-            ]
-          },
-        ]
-      },
-      {
-        className: "infoCraftWrapper",
-        subNodes: [
-          {
-            className: "craftText",
-            textContent: "Requirements:"
-          }, {
-            tag: "button",
-            className: "craftProcessBtn",
-            textContent: "Craft !"
-          }, {
-            className: "craftAlert",
-            textContent: "WMOIQMSMMWQKLMDK"
-          }
-        ]
       }
     ]
   })

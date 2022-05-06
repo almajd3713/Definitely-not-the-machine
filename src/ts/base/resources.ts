@@ -1,5 +1,5 @@
-import { FixedLengthArray, sleep } from "../util";
-import { Miner } from "./machines";
+import { sleep } from "../util";
+import { Machine } from "./machines";
 import generators from "./nodeGen"
 import { resourceCollection } from "./variables";
 
@@ -12,11 +12,13 @@ interface Resource {
 }
 
 interface RawResourceConstructor {
-  name: FixedLengthArray<string, 2>
+  name: string
+  codeName: string
   icon: string
   hardness?: number
   mineYield?: number
   processBase?: number
+  automator: Machine
 }
 
 interface resourceStructure {
@@ -27,32 +29,28 @@ interface resourceStructure {
   icon: HTMLSpanElement
   dropDownArrow: HTMLDivElement
   additionalInfoContainer: HTMLDivElement
-  minerManager: { addMiner: HTMLButtonElement, removeMiner: HTMLButtonElement }
+  automator: { addAutomator: HTMLButtonElement, removeAutomator: HTMLButtonElement }
   automationDisplay: HTMLDivElement
   productionDisplay: HTMLDivElement
 }
 
 export class RawResource implements Resource {
-  hardness?: number = 1
+  hardness?: number
   count = 0
-  mineYield?: number = 1
+  mineYield?: number
   name: string = "placeholder"
   codeName: string = "pl4c3h0lder"
   processBase: number
-  miner: Miner | undefined
+  automator: Machine
   container: HTMLDivElement
   additionalInfoDisplay: boolean = false
   structure: resourceStructure
   icon: string
 
   constructor(props: RawResourceConstructor) {
-    this.name = props.name[0]
-    this.codeName = props.name[1]
-    this.mineYield = props.mineYield || 1
-    this.hardness = props.hardness || 1
-    this.processBase = props.processBase
-    this.icon = props.icon
-
+    ({name: this.name, codeName: this.codeName, mineYield: this.mineYield, hardness: this.hardness, processBase: this.processBase, icon: this.icon, automator: this.automator} = props)
+    if (!this.mineYield) this.mineYield = 1
+    if (!this.hardness) this.hardness = 1
     this.container = generators.resContainer([this.name, this.icon]) as HTMLDivElement
     let resourceInfo = this.container.children[0]
     this.structure = {
@@ -63,9 +61,9 @@ export class RawResource implements Resource {
       icon: resourceInfo.children[1] as HTMLSpanElement,
       dropDownArrow: this.container.children[1] as HTMLDivElement,
       additionalInfoContainer: this.container.children[2] as HTMLDivElement,
-      minerManager: {
-        addMiner: this.container.children[2].querySelectorAll(".autoBtn")[0] as HTMLButtonElement,
-        removeMiner: this.container.children[2].querySelectorAll(".autoBtn")[1] as HTMLButtonElement
+      automator: {
+        addAutomator: this.container.children[2].querySelectorAll(".autoBtn")[0] as HTMLButtonElement,
+        removeAutomator: this.container.children[2].querySelectorAll(".autoBtn")[1] as HTMLButtonElement
       },
       automationDisplay: this.container.querySelectorAll(".automatonDisplay")[0] as HTMLDivElement,
       productionDisplay: this.container.querySelectorAll(".automatonDisplay")[1] as HTMLDivElement
@@ -77,8 +75,8 @@ export class RawResource implements Resource {
 
     this.structure.button.addEventListener("click", () => this.processCycle("manual", 0))
     this.structure.dropDownArrow.addEventListener("click", () => this.dropDownToggle())
-    this.structure.minerManager.addMiner.addEventListener("click", () => this.minerManager("add"))
-    this.structure.minerManager.removeMiner.addEventListener("click", () => this.minerManager("remove"))
+    this.structure.automator.addAutomator.addEventListener("click", () => this.autoManager("add"))
+    this.structure.automator.removeAutomator.addEventListener("click", () => this.autoManager("remove"))
 
     resourceCollection.addResource(this)
   }
@@ -101,18 +99,16 @@ export class RawResource implements Resource {
   }
   set isAutomated(val) {
     this._isAutomated = val
-    if(this.miner) this.processCycle("auto", this.isAutomated)
+    if(this.automator) this.processCycle("auto", this.isAutomated)
     this.refresh(["display"])
   }
-  private minerManager(inp: string) {
+  private autoManager(inp: string) {
     if(inp === "add") {
-      if(!this.miner) this.miner = new Miner(["Miner", "automaton"], "./svg/wood.svg", 0.5)
-      this.miner.count += 1
+      this.automator.itemRef.count = 1
       this.isAutomated += 1
     }
     else if(inp === "remove") {
-      if(this.isAutomated !== 0) {this.isAutomated -= 1; this.miner.count -= 1}
-      if(this.miner && this.isAutomated === 0) this.miner = undefined
+      if(this.isAutomated !== 0) {this.isAutomated -= 1; this.automator.itemRef.countable[1] -= 1}
     }
   }
 
@@ -123,7 +119,7 @@ export class RawResource implements Resource {
         this.structure.automationDisplay.textContent = `${this.isAutomated} Miners are working right now`
         this.structure.productionDisplay.textContent = `Current production level is boom`
       } else if(k === "automation") {
-        if(this.miner) {
+        if(this.automator) {
           // this.isAutomated = true
           // this.cycleAutomated()
         }
@@ -134,7 +130,7 @@ export class RawResource implements Resource {
     let time = this.processBase / this.hardness
     modifier.forEach(mod => {
       if(mod === "automation") {
-        time = time - (this.miner.count * this.miner.power * (time /25  ))
+        time = time - (this.automator.itemRef.count * this.automator.power * (time /25  ))
       }
     })
     return time

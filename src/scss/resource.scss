@@ -24,7 +24,7 @@
       }
 
       &::-webkit-progress-value {
-        transition: all linear .5s;
+        transition: all linear .05s;
         animation: continousBar 1.5s ease-in-out infinite alternate ;
       }
     }

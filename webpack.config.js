@@ -16,5 +16,5 @@ module.exports = {
       {"test": /\.ts$/, "use": ["ts-loader"]},
       {"test": /\.svg$/, "use": ["raw-loader"]}
     ]
-  }
+  },
 }
